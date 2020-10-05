@@ -21,7 +21,7 @@ node () {
                 expression {
                 openshift.withCluster() {
                   openshift.withProject() {
-                      return !openshift.selector("bc", "customer-service").exists()
+                      return !openshift.selector("bc", "customer-service-test").exists()
                       }
                      }
                     }
@@ -29,7 +29,7 @@ node () {
                 script {
                     openshift.withCluster() {
                         openshift.withProject() {
-                            openshift.newApp "registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~/var/lib/jenkins/jobs/customer-service-pipeline-test/workspace", "--name=customer-service"
+                            openshift.newApp "registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~/var/lib/jenkins/jobs/customer-service-test/branches/master/workspace", "--name=customer-service-test"
                         }
                     }
                 }
@@ -38,7 +38,7 @@ node () {
               script {
                 openshift.withCluster() {
                   openshift.withProject() {
-                      def build = openshift.selector("bc", "customer-service");
+                      def build = openshift.selector("bc", "customer-service-test");
                       def startedBuild = build.startBuild("--from-file=\"./target/customer-service-0.0.1-SNAPSHOT.jar\"");
                       startedBuild.logs('-f');
                       echo "Customer service build status: ${startedBuild.object().status}";
@@ -50,7 +50,7 @@ node () {
             script {
                 openshift.withCluster() {
                     openshift.withProject() {
-                        openshift.tag("customer-service"+":latest", "customer-service"+":dev")
+                        openshift.tag("customer-service"+":latest", "customer-service-test"+":dev")
                     }
                 }
             }
@@ -59,13 +59,13 @@ node () {
               script {
                 openshift.withCluster() {
                   openshift.withProject() {
-                    if (openshift.selector('dc', 'customer-service').exists()) {
-                      openshift.selector('dc', 'customer-service').delete()
-                      openshift.selector('svc', 'customer-service').delete()
-                      //openshift.selector('route', 'customer-service').delete()
+                    if (openshift.selector('dc', 'customer-service-test').exists()) {
+                      openshift.selector('dc', 'customer-service-test').delete()
+                      openshift.selector('svc', 'customer-service-test').delete()
+                      //openshift.selector('route', 'customer-service-test').delete()
                     }
 
-                    openshift.newApp("customer-service").narrow("svc").expose()
+                    openshift.newApp("customer-service-test").narrow("svc").expose()
                     }
               }
             }
