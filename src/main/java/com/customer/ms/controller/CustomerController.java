@@ -26,7 +26,7 @@ public class CustomerController {
 		return "Greetings from Spring Boot Application 1.0";
 	}
 
-	// URL - http://localhost:8080/customers
+	// TEST URL - http://localhost:8080/customers
 	@RequestMapping(value = "/customers", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public List<Customer> getCustomers() {
 		List<Customer> list = customerDAO.getAllCustomers();
